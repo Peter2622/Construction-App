@@ -1,6 +1,8 @@
 import 'package:construction_app/screens/loginscreen.dart';
 import 'package:flutter/material.dart';
 
+import 'components/bottomnavcationbar.dart';
+
 void main() {
   runApp(const MyApp());
 }
@@ -15,10 +17,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
+    return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.amber),
       debugShowCheckedModeBanner: false,
-      home: const LoginScreen(),
+      home: Nav(),
     );
   }
 }
