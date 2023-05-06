@@ -4,12 +4,14 @@ import 'package:construction_app/screens/worklog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
-class Nav extends StatefulWidget {
+import 'colors.dart';
+
+class BottomNav extends StatefulWidget {
   @override
-  _NavState createState() => _NavState();
+  _BottomNavState createState() => _BottomNavState();
 }
 
-class _NavState extends State<Nav> {
+class _BottomNavState extends State<BottomNav> {
   int selectedIndex = 0;
   List<Widget> screens = <Widget>[DebitEntry(), WorkLog(), Stock()];
 
@@ -27,9 +29,9 @@ class _NavState extends State<Nav> {
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedFontSize: 20,
-        selectedIconTheme: IconThemeData(color: Colors.amberAccent, size: 40),
-        selectedItemColor: Colors.amberAccent,
+        // selectedFontSize: 20,
+        selectedIconTheme: IconThemeData(color: primaryColor, size: 40),
+        selectedItemColor: primaryColor,
         selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
