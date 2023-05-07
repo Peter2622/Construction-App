@@ -37,12 +37,14 @@ class _BottomNavState extends State<BottomNav> {
           BottomNavigationBarItem(
               icon: SvgPicture.asset(
                 'images/debit.svg',
+                color: selectedIndex == 0 ? primaryColor : black,
                 width: 24,
                 height: 24,
               ),
               label: 'Debit'),
           BottomNavigationBarItem(
               icon: SvgPicture.asset(
+                color: selectedIndex == 1 ? primaryColor : black,
                 'images/worklog.svg',
                 width: 24,
                 height: 24,
@@ -50,6 +52,7 @@ class _BottomNavState extends State<BottomNav> {
               label: 'Worklog'),
           BottomNavigationBarItem(
               icon: SvgPicture.asset(
+                color: selectedIndex == 2 ? primaryColor : black,
                 'images/stock.svg',
                 width: 24,
                 height: 24,

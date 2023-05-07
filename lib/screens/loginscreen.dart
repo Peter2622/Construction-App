@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 import '../components/colors.dart';
 
@@ -27,27 +28,26 @@ class _LoginScreenState extends State<LoginScreen> {
               color: Colors.white,
             ),
             Positioned(
-              left: -60,
-              top: -200,
-              right: -80,
+              left: -40,
+              top: -116,
               child: Container(
                 width: 496,
                 height: 496,
-                decoration:  BoxDecoration(
-                    shape: BoxShape.circle, color: primaryColor),
+                decoration:
+                    BoxDecoration(shape: BoxShape.circle, color: primaryColor),
               ),
             ),
             const Positioned(
-              top: 63,
-              left: 122,
+              top: 70,
+              left: 130,
               child: SizedBox(
                   width: 117,
                   height: 71,
                   child: Image(image: AssetImage('images/logo.png'))),
             ),
             Positioned(
-              left: 30,
-              top: 203,
+              left: 50,
+              top: 200,
               child: Container(
                 width: 299,
                 height: 436,
@@ -70,8 +70,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       const Text(
                         'LOGIN',
-                        style:
-                            TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                            fontSize: 26, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(
                         height: 25,
@@ -147,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   content: Text(
                                       'you are now loged in  ${loginId.text}')));
 
-                                      Navigator.pushNamed(context, '/homescreen');
+                              Navigator.pushNamed(context, '/homescreen');
                             }
                           },
                           child: const Text(
@@ -163,19 +163,24 @@ class _LoginScreenState extends State<LoginScreen> {
                           onTap: () {},
                           child: const Text(
                             'Forget Password?',
-                            style: TextStyle(color: Colors.black87, fontSize: 15),
+                            style:
+                                TextStyle(color: Colors.black87, fontSize: 15),
                           ))
                     ],
                   ),
                 ),
               ),
             ),
-            const Positioned(
-              top: 650,
+            Positioned(
+              top: 680,
               child: SizedBox(
                 width: 359,
                 height: 150,
-                child: Image(image: AssetImage('images/building.png')),
+                child: SvgPicture.asset(
+                  'images/building.svg',
+                  width: 360,
+                  height: 150,
+                ),
               ),
             )
           ],

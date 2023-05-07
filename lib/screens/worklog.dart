@@ -247,8 +247,9 @@ class _WorkLogState extends State<WorkLog> {
                               TextBox(
                                 controller: rdescription,
                                 lableText: 'Description',
-                                width: 200,
+                                width: 300,
                                 height: 100,
+                                maxLines: 20,
                               ),
                             ],
                           ) //Loading Vehicle >>>>>>>!
@@ -348,8 +349,9 @@ class _WorkLogState extends State<WorkLog> {
                                   TextBox(
                                     controller: ldescription,
                                     lableText: 'Description',
-                                    width: 200,
+                                    width: 300,
                                     height: 100,
+                                    maxLines: 20,
                                   ),
                                 ],
                               )

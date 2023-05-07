@@ -23,12 +23,11 @@ class SelectSite extends StatelessWidget {
             ),
             toolbarHeight: 120,
             actions: <Widget>[
-              IconButton(onPressed: () {}, icon: Icon(Icons.logout))
+              IconButton(onPressed: () {}, icon: const Icon(Icons.logout))
             ]),
         body: Column(
           children: [
-             ListTile(
-                title: TextFormat().headerText(text: 'All Sites')),
+            ListTile(title: TextFormat().headerText(text: 'All Sites')),
             const SizedBox(
               height: 10,
             ),
@@ -37,13 +36,13 @@ class SelectSite extends StatelessWidget {
               height: 56,
               child: TextFormField(
                 decoration: InputDecoration(
-                    suffixIcon:
-                        IconButton(onPressed: () {}, icon: Icon(Icons.search)),
+                    suffixIcon: IconButton(
+                        onPressed: () {}, icon: const Icon(Icons.search)),
                     hintText: 'Search Site',
-                    border: OutlineInputBorder()),
+                    border: const OutlineInputBorder()),
               ),
             ),
-            SizedBox(
+            const SizedBox(
               height: 10,
             ),
             Expanded(
@@ -79,7 +78,7 @@ List siteNames = [
   'chennai',
   'kovilpatti',
   'covai',
-   'chennai',
+  'chennai',
   'kovilpatti',
   'covai',
   'mumbai',
