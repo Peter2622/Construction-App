@@ -14,6 +14,20 @@ class DebitEntry extends StatefulWidget {
 }
 
 class _DebitEntryState extends State<DebitEntry> {
+  final expensesKey = GlobalKey<FormState>();
+  final TextEditingController expenseTransactor = TextEditingController();
+  final TextEditingController expenseAmount = TextEditingController();
+  final salaryKey = GlobalKey<FormState>();
+  final TextEditingController salaryTransactor = TextEditingController();
+  final TextEditingController salaryAmount = TextEditingController();
+  final TextEditingController salaryAdvance = TextEditingController();
+  final TextEditingController salary = TextEditingController();
+  final advanceKey = GlobalKey<FormState>();
+  final TextEditingController advanceTransactor = TextEditingController();
+  final TextEditingController advanceAmount = TextEditingController();
+  final materialKey = GlobalKey<FormState>();
+  final TextEditingController materialTransactor = TextEditingController();
+  final TextEditingController materialAmount = TextEditingController();
   int _selectedContainer = 0;
   String dropdownValue = type.first;
   bool checkBox = false;
@@ -182,7 +196,7 @@ class _DebitEntryState extends State<DebitEntry> {
                             ),
                             TextBox(
                                 maxLines: 50,
-                                width: 300,
+                                width: 250,
                                 height: 100,
                                 controller: TextEditingController(),
                                 lableText: 'Description')
@@ -311,7 +325,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                 ),
                                 TextBox(
                                     maxLines: 50,
-                                    width: 300,
+                                    width: 250,
                                     height: 100,
                                     controller: TextEditingController(),
                                     lableText: 'Description')
@@ -362,7 +376,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                     ),
                                     TextBox(
                                         maxLines: 50,
-                                        width: 300,
+                                        width: 250,
                                         height: 100,
                                         controller: TextEditingController(),
                                         lableText: 'Description')
@@ -415,7 +429,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                         ),
                                         TextBox(
                                             maxLines: 50,
-                                            width: 300,
+                                            width: 250,
                                             height: 100,
                                             controller: TextEditingController(),
                                             lableText: 'Description')
@@ -426,6 +440,13 @@ class _DebitEntryState extends State<DebitEntry> {
               ],
             )
           ]),
+        ),
+        floatingActionButton: FloatingActionButton(
+          child: Icon(
+            Icons.save,
+            color: white,
+          ),
+          onPressed: () {},
         ),
       ),
     );
