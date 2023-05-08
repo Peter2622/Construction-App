@@ -21,12 +21,12 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       theme: ThemeData(primarySwatch: Colors.amber),
       debugShowCheckedModeBanner: false,
-      // routes: <String, WidgetBuilder>{
-      //   '/login': (context) => const LoginScreen(),
-      //   '/selectsite': (context) => const SelectSite(),
-      //   '/homescreen': (context) => BottomNav(),
-      // },
-      // initialRoute: '/login',
+      routes: <String, WidgetBuilder>{
+        '/login': (context) => const LoginScreen(),
+        '/selectsite': (context) => const SelectSite(),
+        '/homescreen': (context) => BottomNav(),
+      },
+      initialRoute: '/login',
       home: BottomNav(),
     );
   }

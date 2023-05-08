@@ -1,7 +1,17 @@
+import 'dart:convert';
+
+import 'package:construction_app/model/allsitemodle.dart';
+import 'package:construction_app/services/singleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
 import '../components/colors.dart';
+import '../services/sharedpreference.dart';
+
+import 'package:http/http.dart' as http;
+
+import '../services/singleton.dart';
+import '../services/singleton.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -16,6 +26,47 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController password = TextEditingController();
 
   bool rememberMe = false;
+
+  Future loginDetails(BuildContext context) async {
+    var login = {"mobileNo": loginId.text, "pin": password.text};
+
+    var loginData = jsonEncode(login);
+
+    var loginRequest =
+        await http.post(Uri.parse('http://89.116.231.138:8085/login'),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              "Access-Control-Allow-Origin": "*",
+              "Access-Control-Allow-Headers":
+                  "Origin,Content-Type,Authorization,Access-Control-Allow-Headers, X-Requested-With",
+              "Access-Control-Allow-Methods": "POST, OPTIONS",
+              // "Authorization": "Bearer ",
+            },
+            body: loginData);
+
+    print('Status Code => ${loginRequest.statusCode}');
+    print('LoginRequest Body => ${loginRequest.body}');
+
+    var loginResponse = loginRequest.body;
+    var loginResponseJson = jsonDecode(loginResponse);
+
+    if (loginRequest.statusCode == 200) {
+      print(loginResponseJson['token']);
+      var token = loginResponseJson['token'];
+      print('loginResponseJson token => $token');
+      Token loginForm = Token();
+      loginForm.setToken(token);
+
+      Navigator.pushNamed(context, '/selectsite');
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Check user name & password')));
+    }
+
+  
+    
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -143,11 +194,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   Color.fromARGB(255, 0, 24, 35))),
                           onPressed: () async {
                             if (login.currentState!.validate()) {
-                              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                  content: Text(
-                                      'you are now loged in  ${loginId.text}')));
-
-                              Navigator.pushNamed(context, '/homescreen');
+                              loginDetails(context);
                             }
                           },
                           child: const Text(

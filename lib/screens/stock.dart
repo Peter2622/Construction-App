@@ -37,59 +37,56 @@ class _StockState extends State<Stock> {
               const SizedBox(
                 height: 20,
               ),
-              Expanded(
-                child: Container(
-                  height: 200,
-                  child: ListView.builder(
-                      itemCount: materials.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                            title: Text(" ${materials[index]}"),
-                            trailing: Wrap(
-                              spacing: 40,
-                              children: [
-                                InkWell(
-                                  onTap: () {
-                                    bottomSheetIn(context);
-                                  },
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: Colors.white,
-                                        border: Border.all(color: green)),
-                                    child: Center(
-                                        child: Text(
-                                      'In',
-                                      style: TextStyle(
-                                        color: green,
-                                      ),
-                                    )),
-                                  ),
+              Flexible(
+                child: ListView.builder(
+                    itemCount: materials.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                          title: Text(" ${materials[index]}"),
+                          trailing: Wrap(
+                            spacing: 40,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  bottomSheetIn(context);
+                                },
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Colors.white,
+                                      border: Border.all(color: green)),
+                                  child: Center(
+                                      child: Text(
+                                    'In',
+                                    style: TextStyle(
+                                      color: green,
+                                    ),
+                                  )),
                                 ),
-                                InkWell(
-                                  onTap: () {
-                                    bottomSheetOut(context);
-                                  },
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        color: Colors.white,
-                                        border: Border.all(color: red)),
-                                    child: Center(
-                                        child: Text('Out',
-                                            style: TextStyle(
-                                              color: red,
-                                            ))),
-                                  ),
-                                )
-                              ],
-                            ));
-                      }),
-                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  bottomSheetOut(context);
+                                },
+                                child: Container(
+                                  width: 40,
+                                  height: 40,
+                                  decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(5),
+                                      color: Colors.white,
+                                      border: Border.all(color: red)),
+                                  child: Center(
+                                      child: Text('Out',
+                                          style: TextStyle(
+                                            color: red,
+                                          ))),
+                                ),
+                              )
+                            ],
+                          ));
+                    }),
               ),
             ],
           ),
