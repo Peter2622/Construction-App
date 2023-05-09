@@ -1,29 +1,30 @@
-// import '../model/allsitemodle.dart';
+import '../model/allsitemodle.dart';
+import '../model/stockmodel.dart';
 
-// class GetUserDetails {
-//   static final GetUserDetails _singleton = GetUserDetails._internal();
-//   late AllsitesModel userDetails;
-//   String status = "";
-//   factory GetUserDetails() {
-//     return _singleton;
-//   }
+class UserEntrySingleton {
+ 
 
-//   GetUserDetails._internal();
+  static final UserEntrySingleton _singleton = UserEntrySingleton._internal();
+   GetAllsiteModel? userEntry;
+  String status = "";
 
-// }
+  factory UserEntrySingleton() {
+    return _singleton;
+  }
 
-// // import '../model/allsitemodle.dart';
+  UserEntrySingleton._internal();
+}
 
-// // class UserSingleton {
-// //   static final UserSingleton _singleton = UserSingleton._internal();
-// //   late GetAllsiteModel userDetails;
-// //   String status = "";
-// //   factory UserSingleton() {
-// //     return _singleton;
-// //   }
+class StockSingleton {
+ 
 
-// //   UserSingleton._internal();
+  static final StockSingleton _singleton = StockSingleton._internal();
+   StockModel? stock;
+  String status = "";
 
-// //   String? userName;
-// //   String? role;
-// }
+  factory StockSingleton() {
+    return _singleton;
+  }
+
+  StockSingleton._internal();
+}

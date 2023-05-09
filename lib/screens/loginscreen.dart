@@ -48,23 +48,30 @@ class _LoginScreenState extends State<LoginScreen> {
     print('LoginRequest Body => ${loginRequest.body}');
 
     var loginResponse = loginRequest.body;
+
     var loginResponseJson = jsonDecode(loginResponse);
 
     if (loginRequest.statusCode == 200) {
       print(loginResponseJson['token']);
       var token = loginResponseJson['token'];
+      var userName = loginResponseJson['userName'];
+       print(loginResponseJson['userName']);
+      var role = loginResponseJson['role'];
+       print(loginResponseJson['role']);
       print('loginResponseJson token => $token');
       Token loginForm = Token();
       loginForm.setToken(token);
+
+      UserDetails userInfo = UserDetails();
+
+      userInfo.setUsername(userName);
+      userInfo.setUserRole(role);
 
       Navigator.pushNamed(context, '/selectsite');
     } else {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text('Check user name & password')));
     }
-
-  
-    
   }
 
   @override

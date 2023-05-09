@@ -16,9 +16,7 @@ class SelectSite extends StatefulWidget {
 }
 
 class _SelectSiteState extends State<SelectSite> {
-late Future<List<GetAllsiteModel>> siteListAll;
-
-
+  late Future<List<GetAllsiteModel>> siteListAll;
 
   Future<List<GetAllsiteModel>> getAllSites() async {
     Token token = Token();
@@ -34,16 +32,31 @@ late Future<List<GetAllsiteModel>> siteListAll;
         "Authorization": "Bearer $btoken",
       },
     );
-    print('abujgadkga');
+    print('select site');
     final siteList = getAllsiteModelFromJson(siteResponse.body);
     print(siteResponse.statusCode);
     return siteList;
+  }
+
+  String userName = '';
+  String role = '';
+  userProfile(String userName) async {
+    userName = await UserDetails().getUsername();
+
+    role = await UserDetails().getUserRole();
+    // UserDetails user = await UserDetails();
+    // String userName = await user.getUsername();
+    // String role = await user.getUserRole();
+    // print('get userprofile');
+    // print('user name = >${userName}');
+    // print('user Role = >${role}');
   }
 
   @override
   void initState() {
     super.initState();
     print('init start');
+
     siteListAll = getAllSites();
     print('complete');
   }
@@ -61,7 +74,6 @@ late Future<List<GetAllsiteModel>> siteListAll;
             );
           } else if (snapshot.hasData) {
             print('else if statement');
-            
             return SafeArea(
               child: Scaffold(
                   appBar: AppBar(
@@ -69,15 +81,16 @@ late Future<List<GetAllsiteModel>> siteListAll;
                         height: 100,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children:  [
+                          children: const [
                             Text(
-                              'User Name', 
-                              style: TextStyle(fontSize: 25, color: Colors.white),
+                              'userProfile(userName)',
+                              style:
+                                  TextStyle(fontSize: 25, color: Colors.white),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            Text(Token().getToken()), 
+                            Text('userProfile(role)'),
                           ],
                         ),
                       ),
@@ -90,9 +103,8 @@ late Future<List<GetAllsiteModel>> siteListAll;
                             icon: const Icon(Icons.logout))
                       ]),
                   body: Container(
-                    height: 600,
+                    height: 900,
                     child: Column(
-                      
                       children: [
                         ListTile(
                             title: TextFormat().headerText(text: 'All Sites')),
@@ -114,21 +126,26 @@ late Future<List<GetAllsiteModel>> siteListAll;
                         const SizedBox(
                           height: 10,
                         ),
-                        InkWell(
-                          onTap: () {
-                            Navigator.of(context).pushNamed('/homescreen');
-                          },
-                          child: Container(
-height: 550,
-                            child: ListView.builder(
+                        Container(
+                          height: 500,
+                          child: ListView.builder(
                               shrinkWrap: true,
                               // physics: const NeverScrollableScrollPhysics(),
-                                itemCount: snapshot.data!.length,
-                                itemBuilder: (BuildContext context, int index) {
-                                  return ListTile(
-                                      title: Text(snapshot.data![index].siteName));
-                                }),
-                          ),
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (BuildContext context, int index) {
+                                return InkWell(
+                                  onTap: () {
+                                    Navigator.of(context)
+                                        .pushNamed('/homescreen');
+
+                                    UserEntrySingleton().userEntry =
+                                        snapshot.data![index];
+                                  },
+                                  child: ListTile(
+                                      title:
+                                          Text(snapshot.data![index].siteName)),
+                                );
+                              }),
                         ),
                       ],
                     ),
