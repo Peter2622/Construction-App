@@ -40,21 +40,22 @@ class _SelectSiteState extends State<SelectSite> {
 
   String userName = '';
   String role = '';
-  userProfile(String userName) async {
-    userName = await UserDetails().getUsername();
+  userProfile() async {
+    var user = await UserDetails().getUsername();
+    userName = user;
+    var rol = await UserDetails().getUserRole();
 
-    role = await UserDetails().getUserRole();
-    // UserDetails user = await UserDetails();
-    // String userName = await user.getUsername();
-    // String role = await user.getUserRole();
-    // print('get userprofile');
-    // print('user name = >${userName}');
-    // print('user Role = >${role}');
+    role = rol;
+
+    print('username => $userName');
+    print('Role => $role');
   }
 
   @override
   void initState() {
+    userProfile();
     super.initState();
+
     print('init start');
 
     siteListAll = getAllSites();
@@ -77,20 +78,21 @@ class _SelectSiteState extends State<SelectSite> {
             return SafeArea(
               child: Scaffold(
                   appBar: AppBar(
+                    automaticallyImplyLeading: false,
                       title: Container(
                         height: 100,
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
-                              'userProfile(userName)',
+                              userName,
                               style:
                                   TextStyle(fontSize: 25, color: Colors.white),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            Text('userProfile(role)'),
+                            Text(role),
                           ],
                         ),
                       ),

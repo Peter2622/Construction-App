@@ -23,19 +23,22 @@ class DebitEntry extends StatefulWidget {
 
 class _DebitEntryState extends State<DebitEntry> {
   final debitKey = GlobalKey<FormState>();
-  final TextEditingController expenseTransactor = TextEditingController();
-  final TextEditingController expenseAmount = TextEditingController();
 
-  final TextEditingController salaryTransactor = TextEditingController();
+  final TextEditingController expenseAmount = TextEditingController();
+  final TextEditingController expenseDescription = TextEditingController();
+
   final TextEditingController salaryAmount = TextEditingController();
+  final TextEditingController betaAmount = TextEditingController();
   final TextEditingController salaryAdvance = TextEditingController();
   final TextEditingController salary = TextEditingController();
+  final TextEditingController salaryDescription = TextEditingController();
 
-  final TextEditingController advanceTransactor = TextEditingController();
   final TextEditingController advanceAmount = TextEditingController();
+  final TextEditingController advanceDescription = TextEditingController();
 
-  final TextEditingController materialTransactor = TextEditingController();
   final TextEditingController materialAmount = TextEditingController();
+  final TextEditingController materialDescription = TextEditingController();
+   final TextEditingController transactor = TextEditingController();
   int _selectedContainer = 0;
 
   bool checkBox = false;
@@ -51,16 +54,45 @@ class _DebitEntryState extends State<DebitEntry> {
   }
 
   debitEntryPost() async {
+    print('Debit entry ');
+    print('Selected Container => $_selectedContainer');
+    String select = "";
+    String amount = "";
+    if (_selectedContainer == 0) {
+      select = "Expense";
+    } else if (_selectedContainer == 1) {
+      if (expense == "Salary") {
+        select = "Salary";
+      } else {
+        select = "Beta";
+      }
+    } else if (_selectedContainer == 2) {
+      select = "Advance";
+    } else {
+      select = "Material";
+    }
+
+    if (_selectedContainer == 0) {
+      amount = expenseAmount.text;
+    } else if (_selectedContainer == 1) {
+      if (expense == "Salary") {
+        amount = salaryAmount.text;
+      } else {
+        amount = betaAmount.text;
+      }
+    } else if (_selectedContainer == 2) {
+      amount = advanceAmount.text;
+    } else {
+      amount = materialAmount.text;
+    }
     var jsonData = {
       {
-        "accountType": "Advance",
+        "accountType": select,
         "actualAmount": 0,
         "adjustmentAmount": 0,
         "advanceAdjustment": true,
         "description": "string",
-        "paidAmount": 0,
-        "siteId": "string",
-        "siteName": "string",
+        "paidAmount": amount,
         "transactionDate": "2023-05-09",
         "transactionType": "CREDIT",
         "transactorId": "string",
@@ -260,7 +292,7 @@ class _DebitEntryState extends State<DebitEntry> {
                             TextBox(
                               width: 200,
                               height: 50,
-                              controller: TextEditingController(),
+                              controller: transactor,
                               lableText: 'Transactor Type',
                               suffixIcon: IconButton(
                                   onPressed: () {
@@ -290,7 +322,7 @@ class _DebitEntryState extends State<DebitEntry> {
                               width: 200,
                               height: 50,
                               prefixIcon: const Icon(Icons.currency_rupee),
-                              controller: TextEditingController(),
+                              controller: expenseDescription,
                               lableText: 'Amount',
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -307,7 +339,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                 maxLines: 30,
                                 width: 250,
                                 height: 100,
-                                controller: TextEditingController(),
+                                controller: expenseDescription,
                                 lableText: 'Description')
                           ],
                         ),
@@ -372,7 +404,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                     TextBox(
                                       width: 200,
                                       height: 50,
-                                      controller: TextEditingController(),
+                                      controller: transactor,
                                       lableText: 'Transactor Type',
                                       suffixIcon: IconButton(
                                           onPressed: () {
@@ -509,7 +541,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                     TextBox(
                                       width: 200,
                                       height: 50,
-                                      controller: TextEditingController(),
+                                      controller: transactor,
                                       lableText: 'Transactor Type',
                                       suffixIcon: IconButton(
                                           onPressed: () {
@@ -581,7 +613,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                         TextBox(
                                           width: 200,
                                           height: 50,
-                                          controller: TextEditingController(),
+                                          controller: transactor,
                                           lableText: 'Transactor Type',
                                           suffixIcon: IconButton(
                                               onPressed: () {
@@ -648,6 +680,8 @@ class _DebitEntryState extends State<DebitEntry> {
             color: white,
           ),
           onPressed: () {
+            print('Debit entry success');
+            debitEntryPost();
             if (debitKey.currentState!.validate()) {}
           },
         ),
@@ -740,9 +774,22 @@ class _DebitEntryState extends State<DebitEntry> {
                         child: ListView.builder(
                             itemCount: snapshot.data!.length,
                             itemBuilder: (BuildContext context, int index) {
-                              return ListTile(
-                                  title: Text(
-                                      snapshot.data![index].transactorName));
+                              return InkWell(
+                                onTap: () {},
+                                child: ListTile(
+                                    onTap: () {
+                                      setState(
+                                        () {
+                                          transactor.text = snapshot
+                                              .data![index].transactorName;
+
+                                          Navigator.pop(context);
+                                        },
+                                      );
+                                    },
+                                    title: Text(
+                                        snapshot.data![index].transactorName)),
+                              );
                             }),
                       ),
                     ],

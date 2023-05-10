@@ -2,6 +2,7 @@ import 'package:construction_app/components/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
+import 'package:intl/intl.dart';
 
 import '../components/colors.dart';
 import '../components/text.dart';
@@ -41,7 +42,7 @@ class _WorkLogState extends State<WorkLog> {
   TextEditingController lbeta = TextEditingController();
   TextEditingController ltotal = TextEditingController();
   TextEditingController ldescription = TextEditingController();
-
+TextEditingController currentDate = TextEditingController();
   String dropdownValue = vendorType.first;
   @override
   Widget build(BuildContext context) {
@@ -67,10 +68,14 @@ class _WorkLogState extends State<WorkLog> {
                   ),
                   TextBox(
                     lableText: 'Date',
-                    suffixIcon: Icon(Icons.calendar_month_rounded),
+                    suffixIcon: InkWell(
+                      onTap: () {
+                             _showDatePicker(context, currentDate);
+                      },
+                      child: Icon(Icons.calendar_month_rounded)),
                     width: 200,
                     height: 50,
-                    controller: TextEditingController(),
+                    controller: currentDate,
                   ),
                   const SizedBox(
                     height: 32,
@@ -488,6 +493,25 @@ class _WorkLogState extends State<WorkLog> {
     );
   }
 }
+
+  Future<void> _showDatePicker(
+      BuildContext context, TextEditingController date) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(1800, 8),
+        lastDate: DateTime(2101));
+    if (picked != null) {
+      if (picked.isAfter(DateTime.now())) {
+        currentDate.text = DateFormat("yyyy-MM-dd").format(picked);
+      }
+
+      print(DateFormat("dd-MM-yyyy").format(picked));
+    }
+  }
+
+  
+
 
 List<String> vendorType = [
   'Labor',

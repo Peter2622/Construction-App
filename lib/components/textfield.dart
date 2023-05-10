@@ -4,7 +4,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 
 class TextBox extends StatelessWidget {
   TextBox(
-      {this.width,
+      {super.key, this.width,
       this.height,
       required this.controller,
       this.keyboardType,
@@ -13,7 +13,9 @@ class TextBox extends StatelessWidget {
       this.prefixIcon,
       this.suffixIcon,
       required this.lableText,
-      this.validator});
+      this.validator,
+    
+      });
 
   double? width;
   double? height;
@@ -25,6 +27,7 @@ class TextBox extends StatelessWidget {
   Widget? suffixIcon;
   String lableText;
   String? Function(String?)? validator;
+ 
   @override
   Widget build(BuildContext context) {
     return Container(
