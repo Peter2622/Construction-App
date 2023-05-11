@@ -1,3 +1,4 @@
+import '../model/accountModel.dart';
 import '../model/allsitemodle.dart';
 import '../model/stockmodel.dart';
 
@@ -15,6 +16,8 @@ class UserEntrySingleton {
   UserEntrySingleton._internal();
 }
 
+
+
 class StockSingleton {
  
 
@@ -27,4 +30,18 @@ class StockSingleton {
   }
 
   StockSingleton._internal();
+}
+
+class TransactorSingleton {
+ 
+
+  static final TransactorSingleton _singleton = TransactorSingleton._internal();
+   AccountModel? transactor;
+  String status = "";
+
+  factory TransactorSingleton() {
+    return _singleton;
+  }
+
+  TransactorSingleton._internal();
 }

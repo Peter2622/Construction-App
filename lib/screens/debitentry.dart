@@ -10,6 +10,7 @@ import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:http/http.dart' as http;
+import 'package:intl/intl.dart';
 
 import '../model/accountModel.dart';
 import '../services/sharedpreference.dart';
@@ -24,21 +25,19 @@ class DebitEntry extends StatefulWidget {
 class _DebitEntryState extends State<DebitEntry> {
   final debitKey = GlobalKey<FormState>();
 
-  final TextEditingController expenseAmount = TextEditingController();
-  final TextEditingController expenseDescription = TextEditingController();
+  final TextEditingController debitAmount = TextEditingController();
+  final TextEditingController description = TextEditingController();
 
-  final TextEditingController salaryAmount = TextEditingController();
   final TextEditingController betaAmount = TextEditingController();
   final TextEditingController salaryAdvance = TextEditingController();
   final TextEditingController salary = TextEditingController();
-  final TextEditingController salaryDescription = TextEditingController();
-
-  final TextEditingController advanceAmount = TextEditingController();
-  final TextEditingController advanceDescription = TextEditingController();
 
   final TextEditingController materialAmount = TextEditingController();
-  final TextEditingController materialDescription = TextEditingController();
-   final TextEditingController transactor = TextEditingController();
+
+  final TextEditingController transactor = TextEditingController();
+  final TextEditingController adjustmentAmount = TextEditingController();
+
+  final TextEditingController balanceAmount = TextEditingController();
   int _selectedContainer = 0;
 
   bool checkBox = false;
@@ -58,47 +57,40 @@ class _DebitEntryState extends State<DebitEntry> {
     print('Selected Container => $_selectedContainer');
     String select = "";
     String amount = "";
-    if (_selectedContainer == 0) {
-      select = "Expense";
-    } else if (_selectedContainer == 1) {
-      if (expense == "Salary") {
-        select = "Salary";
-      } else {
-        select = "Beta";
+    String type = '';
+    
+
+    int index = 0;
+
+    if (index >= 0 && index < transactorType.length) {
+      String selectedValue = transactorType[index];
+      print("Selected value: $selectedValue");
+
+      if (selectedValue == "WORKER") {
+        type = 'WORKER';
+      } else if (selectedValue == "MD") {
+        type = 'MD';
+      } else if (selectedValue == "VENDOR") {
+        type = 'VENDOR';
+      } else if (selectedValue == "OTHERS") {
+        type = 'OTHERS';
       }
-    } else if (_selectedContainer == 2) {
-      select = "Advance";
-    } else {
-      select = "Material";
     }
 
-    if (_selectedContainer == 0) {
-      amount = expenseAmount.text;
-    } else if (_selectedContainer == 1) {
-      if (expense == "Salary") {
-        amount = salaryAmount.text;
-      } else {
-        amount = betaAmount.text;
-      }
-    } else if (_selectedContainer == 2) {
-      amount = advanceAmount.text;
-    } else {
-      amount = materialAmount.text;
-    }
     var jsonData = {
-      {
-        "accountType": select,
-        "actualAmount": 0,
-        "adjustmentAmount": 0,
-        "advanceAdjustment": true,
-        "description": "string",
-        "paidAmount": amount,
-        "transactionDate": "2023-05-09",
-        "transactionType": "CREDIT",
-        "transactorId": "string",
-        "transactorName": "string",
-        "transactorType": "MD"
-      }
+      "accountType": select,
+      "actualAmount": 0,
+      "adjustmentAmount": adjustmentAmount.text,
+      "advanceAdjustment": checkBox == true ? true : false,
+      "description": description.text,
+      "paidAmount": debitAmount.text,
+      "siteId": UserEntrySingleton().userEntry!.siteId.toString(),
+      "siteName": UserEntrySingleton().userEntry!.siteName.toString(),
+      "transactionDate": DateFormat("yyyy-MM-dd").format(DateTime.now()),
+      "transactionType": "DEBIT",
+      "transactorId": TransactorSingleton().transactor!.transactorId.toString(),
+      "transactorName": transactor.text,
+      "transactorType": type
     };
     print(jsonData);
 
@@ -122,13 +114,13 @@ class _DebitEntryState extends State<DebitEntry> {
     print("Debit Entry Post Status code=> ${jsonRequest.statusCode}");
   }
 
-  late Future<List<AccountModel>> accountDetails;
+  late Future<List<AccountModel>> debitEntryGet;
 
-  Future<List<AccountModel>> getAccountDetails(String transactorType) async {
+  Future<List<AccountModel>> debitEntryDetails(String transactorType) async {
     Token token = Token();
     String btoken = await token.getToken();
     print("http://89.116.231.138:8085/accounts?transactorType=$transactorType");
-    var accountResponse = await http.get(
+    var debitResponse = await http.get(
       Uri.parse(
           "http://89.116.231.138:8085/accounts?transactorType=$transactorType"),
       headers: {
@@ -140,15 +132,16 @@ class _DebitEntryState extends State<DebitEntry> {
         "Authorization": "Bearer $btoken",
       },
     );
-    print('get account');
-    final accountList = accountModelFromJson(accountResponse.body);
-    print(accountResponse.statusCode);
-    return accountList;
+    print('debit entry');
+    final debitEntry = accountModelFromJson(debitResponse.body);
+    print(debitResponse.statusCode);
+    return debitEntry;
   }
 
   @override
   void initState() {
     super.initState();
+    debitEntryGet = debitEntryDetails('WORKER');
   }
 
   @override
@@ -297,8 +290,8 @@ class _DebitEntryState extends State<DebitEntry> {
                               suffixIcon: IconButton(
                                   onPressed: () {
                                     setState(() {
-                                      accountDetails =
-                                          getAccountDetails('WORKER');
+                                      debitEntryGet =
+                                          debitEntryDetails('WORKER');
                                     });
                                     bottomSheet(context);
                                   },
@@ -322,7 +315,7 @@ class _DebitEntryState extends State<DebitEntry> {
                               width: 200,
                               height: 50,
                               prefixIcon: const Icon(Icons.currency_rupee),
-                              controller: expenseDescription,
+                              controller: debitAmount,
                               lableText: 'Amount',
                               validator: (value) {
                                 if (value == null || value.isEmpty) {
@@ -339,7 +332,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                 maxLines: 30,
                                 width: 250,
                                 height: 100,
-                                controller: expenseDescription,
+                                controller: description,
                                 lableText: 'Description')
                           ],
                         ),
@@ -409,8 +402,8 @@ class _DebitEntryState extends State<DebitEntry> {
                                       suffixIcon: IconButton(
                                           onPressed: () {
                                             setState(() {
-                                              accountDetails =
-                                                  getAccountDetails('WORKER');
+                                              debitEntryGet =
+                                                  debitEntryDetails("WORKER");
                                             });
                                             bottomSheet(context);
                                           },
@@ -435,7 +428,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                       height: 50,
                                       prefixIcon:
                                           const Icon(Icons.currency_rupee),
-                                      controller: TextEditingController(),
+                                      controller: debitAmount,
                                       lableText: 'Amount',
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -470,7 +463,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                         height: 50,
                                         prefixIcon:
                                             const Icon(Icons.currency_rupee),
-                                        controller: TextEditingController(),
+                                        controller: adjustmentAmount,
                                         lableText: 'Advance Amount',
                                         validator: (value) {
                                           if (value == null || value.isEmpty) {
@@ -489,7 +482,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                       height: 50,
                                       prefixIcon:
                                           const Icon(Icons.currency_rupee),
-                                      controller: TextEditingController(),
+                                      controller: debitAmount,
                                       lableText: 'Salary',
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -508,7 +501,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                         height: 50,
                                         prefixIcon:
                                             const Icon(Icons.currency_rupee),
-                                        controller: TextEditingController(),
+                                        controller: balanceAmount,
                                         lableText: 'Balance to Pay'),
                                     const SizedBox(
                                       height: 30,
@@ -517,7 +510,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                         maxLines: 50,
                                         width: 250,
                                         height: 100,
-                                        controller: TextEditingController(),
+                                        controller: description,
                                         lableText: 'Description')
                                   ],
                                 ),
@@ -546,8 +539,8 @@ class _DebitEntryState extends State<DebitEntry> {
                                       suffixIcon: IconButton(
                                           onPressed: () {
                                             setState(() {
-                                              accountDetails =
-                                                  getAccountDetails('WORKER');
+                                              debitEntryGet =
+                                                  debitEntryDetails('WORKER');
                                             });
                                             bottomSheet(context);
                                           },
@@ -572,7 +565,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                       height: 50,
                                       prefixIcon:
                                           const Icon(Icons.currency_rupee),
-                                      controller: TextEditingController(),
+                                      controller: debitAmount,
                                       lableText: 'Amount',
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
@@ -589,7 +582,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                         maxLines: 50,
                                         width: 250,
                                         height: 100,
-                                        controller: TextEditingController(),
+                                        controller: description,
                                         lableText: 'Description')
                                   ],
                                 ),
@@ -618,8 +611,8 @@ class _DebitEntryState extends State<DebitEntry> {
                                           suffixIcon: IconButton(
                                               onPressed: () {
                                                 setState(() {
-                                                  accountDetails =
-                                                      getAccountDetails(
+                                                  debitEntryGet =
+                                                      debitEntryDetails(
                                                           'WORKER');
                                                 });
                                                 bottomSheet(context);
@@ -646,7 +639,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                           height: 50,
                                           prefixIcon:
                                               const Icon(Icons.currency_rupee),
-                                          controller: TextEditingController(),
+                                          controller: debitAmount,
                                           lableText: 'Amount',
                                           validator: (value) {
                                             if (value == null ||
@@ -664,7 +657,7 @@ class _DebitEntryState extends State<DebitEntry> {
                                             maxLines: 50,
                                             width: 250,
                                             height: 100,
-                                            controller: TextEditingController(),
+                                            controller: description,
                                             lableText: 'Description')
                                       ],
                                     ),
@@ -681,8 +674,10 @@ class _DebitEntryState extends State<DebitEntry> {
           ),
           onPressed: () {
             print('Debit entry success');
-            debitEntryPost();
-            if (debitKey.currentState!.validate()) {}
+
+            if (debitKey.currentState!.validate()) {
+              debitEntryPost();
+            }
           },
         ),
       ),
@@ -699,7 +694,7 @@ class _DebitEntryState extends State<DebitEntry> {
           return StatefulBuilder(
             builder: (context, setState) => Container(
                 child: FutureBuilder<List<AccountModel>>(
-              future: accountDetails,
+              future: debitEntryGet,
               builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   print('account if statement');
@@ -745,8 +740,8 @@ class _DebitEntryState extends State<DebitEntry> {
                                   setState(() {
                                     currentlySelected = newvalue;
                                     print(currentlySelected);
-                                    accountDetails =
-                                        getAccountDetails(currentlySelected);
+                                    debitEntryGet =
+                                        debitEntryDetails(currentlySelected);
                                   });
                                 },
                                 value: currentlySelected,

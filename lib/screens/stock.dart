@@ -30,6 +30,7 @@ class _StockState extends State<Stock> {
   TextEditingController matrialOutQty = TextEditingController();
   TextEditingController currentDate = TextEditingController();
   DateTime? _selectedDate;
+  String id = '';
   final stocInKey = GlobalKey<FormState>();
   final stocOutKey = GlobalKey<FormState>();
   Future<List<StockModel>> getStockDetails() async {
@@ -53,27 +54,29 @@ class _StockState extends State<Stock> {
     return stockList;
   }
 
-  stockPost() async {
+  stockEntryPut(String id) async {
     var jsonData = {
-      {
-        "materialConsumed": [
-          {"date": matrialOutDate, "quantity": matrialOutQty.text}
-        ],
-        // "materialId": "string",
-        // "materialName": "string",
-        "materialReceived": [
-          {"date": matrialInDate.text, "quantity": matrialInQty.text}
-        ],
-      }
+      "materialConsumed": [
+        {"date": currentDate.text, "quantity": matrialOutQty.text}
+      ],
+      "materialId": StockSingleton().stock!.materialId.toString(),
+      "materialName": StockSingleton().stock!.materialName.toString(),
+      "materialReceived": [
+        {"date": currentDate.text, "quantity": matrialInQty.text}
+      ],
+      "procurementOrder": [
+        {"orderDate": "2023-05-11", "orderQuantity": 0}
+      ],
+      "siteId": UserEntrySingleton().userEntry!.siteName.toString()
     };
     print(jsonData);
 
     var encodedJson = jsonEncode(jsonData);
     Token token = Token();
     String btoken = await token.getToken();
-    print('userlist $btoken');
-    var jsonRequest = await http.post(
-      Uri.parse("http://89.116.231.138:8085/stocks"),
+
+    var jsonRequest = await http.put(
+      Uri.parse("http://89.116.231.138:8085/stocks/${id}"),
       headers: {
         'Content-Type': 'application/json;charset=UTF-8',
         "Access-Control-Allow-Origin": "*",
@@ -85,13 +88,13 @@ class _StockState extends State<Stock> {
       body: encodedJson,
     );
 
-    print("stock post => ${jsonRequest.statusCode}");
+    print("Stock put status code => ${jsonRequest.statusCode}");
   }
 
   @override
   void initState() {
     super.initState();
-
+    id = '';
     stockDetails = getStockDetails();
     _dateController = TextEditingController();
   }
@@ -286,7 +289,14 @@ class _StockState extends State<Stock> {
                                             MaterialStatePropertyAll(
                                                 Colors.blueGrey[800])),
                                     onPressed: () {
-                                      if (stocInKey.currentState!.validate()) {}
+                                      if (stocInKey.currentState!.validate()) {
+                                        stockEntryPut(
+                                            StockSingleton().stock!.id);
+                                      }
+
+                                      setState(() {
+                                        Navigator.pop(context);
+                                      });
                                     },
                                     child: Text(
                                       'Submit',
@@ -388,8 +398,12 @@ class _StockState extends State<Stock> {
                                                 Colors.blueGrey[800])),
                                     onPressed: () {
                                       if (stocOutKey.currentState!.validate()) {
-                                        stockPost();
+                                        stockEntryPut(
+                                            StockSingleton().stock!.id);
                                       }
+                                      setState(() {
+                                        Navigator.pop(context);
+                                      });
                                     },
                                     child: Text(
                                       'Submit',
@@ -427,6 +441,4 @@ class _StockState extends State<Stock> {
       print(DateFormat("dd-MM-yyyy").format(picked));
     }
   }
-
- 
 }

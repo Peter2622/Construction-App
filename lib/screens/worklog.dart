@@ -1,11 +1,14 @@
+import 'dart:convert';
+
 import 'package:construction_app/components/textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter/src/widgets/placeholder.dart';
 import 'package:intl/intl.dart';
-
+import 'package:http/http.dart' as http;
 import '../components/colors.dart';
 import '../components/text.dart';
+import '../services/sharedpreference.dart';
 
 class WorkLog extends StatefulWidget {
   const WorkLog({super.key});
@@ -42,13 +45,67 @@ class _WorkLogState extends State<WorkLog> {
   TextEditingController lbeta = TextEditingController();
   TextEditingController ltotal = TextEditingController();
   TextEditingController ldescription = TextEditingController();
-TextEditingController currentDate = TextEditingController();
+  TextEditingController currentDate = TextEditingController();
+  final startTime = TextEditingController();
+  final endTime = TextEditingController();
   String dropdownValue = vendorType.first;
+  late TimeOfDay _selectedTime;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedTime = TimeOfDay.now();
+  }
+
+  workLogPost() async {
+    var jsonData = {
+      
+        "createdBy": "string",
+        "createdDateTime": "2023-05-11T06:41:06.935Z",
+        "id": "string",
+        "progressDate": currentDate.text,
+        "siteId": "string",
+        "siteName": "string",
+        "vendorId": "string",
+        "vendorName": "string",
+        "vendorType": vendorType == 0
+            ? 'Labor'
+            : vendorType == 1
+                ? "Running Vehicle"
+                : vendorType == 2
+                    ? "Loading Vehicle"
+                    : "",
+        "wagesAttribute": {}
+      
+    };
+    print(jsonData);
+
+    var encodedJson = jsonEncode(jsonData);
+    Token token = Token();
+    String btoken = await token.getToken();
+    print('userlist $btoken');
+    var jsonRequest = await http.post(
+      Uri.parse("http://89.116.231.138:8085//workProgress"),
+      headers: {
+        'Content-Type': 'application/json;charset=UTF-8',
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers":
+            "Origin,Content-Type,Authorization,Access-Control-Allow-Headers,X-Requested-With",
+        "Access-Control-Allow-Methods": "POST,OPTIONS",
+        "Authorization": "Bearer $btoken",
+      },
+      body: encodedJson,
+    );
+
+    print("worklog post => ${jsonRequest.statusCode}");
+  }
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: TextFormat().headerText(
             text: 'Work Log',
             colors: white,
@@ -67,15 +124,15 @@ TextEditingController currentDate = TextEditingController();
                     height: 30,
                   ),
                   TextBox(
-                    lableText: 'Date',
                     suffixIcon: InkWell(
-                      onTap: () {
-                             _showDatePicker(context, currentDate);
-                      },
-                      child: Icon(Icons.calendar_month_rounded)),
+                        onTap: () {
+                          _showDatePicker(context, currentDate);
+                        },
+                        child: const Icon(Icons.calendar_month_rounded)),
                     width: 200,
                     height: 50,
                     controller: currentDate,
+                    lableText: 'Date',
                   ),
                   const SizedBox(
                     height: 32,
@@ -153,7 +210,7 @@ TextEditingController currentDate = TextEditingController();
                             ),
                             TextBox(
                               lableText: 'OD Amount',
-                              prefixIcon: Icon(Icons.currency_rupee),
+                              prefixIcon: const Icon(Icons.currency_rupee),
                               width: 200,
                               height: 50,
                               controller: odAmount,
@@ -233,14 +290,20 @@ TextEditingController currentDate = TextEditingController();
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     TextBox(
-                                      suffixIcon: Icon(
-                                        Icons.timer,
-                                        color: primaryColor,
+                                      suffixIcon: InkWell(
+                                        onTap: () {
+                                          _selectTime(context);
+                                        },
+                                        child: Icon(
+                                          Icons.timer,
+                                          color: primaryColor,
+                                        ),
                                       ),
                                       width: 150,
                                       height: 50,
-                                      controller: rstartTime,
-                                      lableText: 'Start Time',
+                                      controller: startTime,
+                                      lableText:
+                                          '${_selectedTime.hour}:${_selectedTime.minute}',
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Required';
@@ -253,14 +316,20 @@ TextEditingController currentDate = TextEditingController();
                                       width: 20,
                                     ),
                                     TextBox(
-                                      suffixIcon: Icon(
-                                        Icons.timer,
-                                        color: primaryColor,
+                                      suffixIcon: InkWell(
+                                        onTap: () {
+                                          _selectTime(context);
+                                        },
+                                        child: Icon(
+                                          Icons.timer,
+                                          color: primaryColor,
+                                        ),
                                       ),
                                       width: 150,
                                       height: 50,
-                                      controller: rendTime,
-                                      lableText: 'End Time',
+                                      controller: endTime,
+                                      lableText:
+                                          '${_selectedTime.hour}:${_selectedTime.minute}',
                                       validator: (value) {
                                         if (value == null || value.isEmpty) {
                                           return 'Required';
@@ -414,7 +483,7 @@ TextEditingController currentDate = TextEditingController();
                                               return null;
                                             }
                                           },
-                                        )
+                                        ),
                                       ],
                                     ),
                                     const SizedBox(
@@ -483,6 +552,7 @@ TextEditingController currentDate = TextEditingController();
         floatingActionButton: FloatingActionButton(
           onPressed: () {
             if (worklogKey.currentState!.validate()) {}
+            workLogPost();
           },
           child: const Icon(
             Icons.save,
@@ -492,7 +562,6 @@ TextEditingController currentDate = TextEditingController();
       ),
     );
   }
-}
 
   Future<void> _showDatePicker(
       BuildContext context, TextEditingController date) async {
@@ -510,8 +579,19 @@ TextEditingController currentDate = TextEditingController();
     }
   }
 
-  
+  Future<void> _selectTime(BuildContext context) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: _selectedTime,
+    );
 
+    if (pickedTime != null) {
+      setState(() {
+        _selectedTime = pickedTime;
+      });
+    }
+  }
+}
 
 List<String> vendorType = [
   'Labor',
